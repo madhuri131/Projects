@@ -1,0 +1,271 @@
+create database Employee_Managment_DB;
+use Employee_Managment_DB;
+
+/* Employee basic information table */
+
+create table Emp_Info(
+	empid int primary key,
+    efirstname varchar(20) NOT NULL,
+    elastname varchar(20) NOT NULL,
+    ecity varchar(20) NOT NULL,
+    epincode int NOT NULL unique,
+	eage int NOT NULL,
+    egender char(6) NOT NULL,
+    edob date NOT NULL,
+    equalification varchar(20) NOT NULL,
+    edoj date NOT NULL,
+    edesignation varchar(20) NOT NULL,
+    emaritalstatus varchar(20)NOT NULL ,
+    eexperience float NOT NULL,
+    eexcompany varchar(20)NOT NULL,
+    etechnology varchar(20) NOT NULL
+);
+drop table emp_info;
+insert into emp_info values(101,'Madhuri','Patil','Dhule',424304,26,'Female','1994-07-13','BE Computer','2020-11-07','Full stack developer','Single',2.5,'Cognizant','java');
+select * from emp_info;
+insert into emp_info values(102,'Mansi','Malunjkar','Nashik',424344,23,'Female','1997-06-26','BE Computer','2020-01-07','Full stack developer','Single',1.7,'Capgimini','java'),
+							(103,'Mayur','Borkar','Nagpur',424202,23,'Male','1995-06-02','BE Computer','2021-02-14','front end developer','Single',1.5,'Yash Tech','react'),
+                            (104,'Mayur','Pawar','Mumbai',411021,22,'Male','1998-02-16','BE Mechanical','2021-04-11','.net developer','Single',0.6,'Morningstar','.net'),
+                            (105,'Mahesh','Dahiphale','Latur',412011,22,'Male','1998-12-03','BE Mechanical','2021-01-11','salesforce developer','Single',0.5,'SAP','salesforce');
+
+/* Employee Contact Information table */
+
+create table Emp_Contact(empid int ,mobileno varchar(10) NOT NULL,homeno varchar(10) ,emergencyno varchar(10)NOT NULL,
+constraint fk_Emp_Contact_empid FOREIGN KEY(empid) references emp_info(empid));
+insert into emp_contact values(101,'9811111111','9822222222','9833333333');
+insert into emp_contact values(102,'9711111111','9722222222','9733333333'),
+								(103,'9611111111','9622222222','9633333333'),
+                                (104,'9411111111','9422222222','9433333333'),
+                                (105,'9511111111','9522222222','9533333333');
+
+select * from emp_contact;
+drop table emp_contact;
+
+/* Employee Salary Information Table */
+
+create table emp_salaryinfo (empid int,yearsal float(11) NOT NULL,monthsal varchar(20) NOT NULL ,paymonth varchar(20) NOT NULL,
+constraint fk_emp_salaryinfo FOREIGN KEY(empid)references emp_info(empid));
+insert into emp_salaryinfo values(101,400000,'33.330','June'),
+								(102,470000,'39.160','June'),
+                                (103,51000,'42.500','June'),
+                                (104,370000,'30.833','June'),
+                                (105,650000,'54.166','June');
+insert into emp_salaryinfo values(111,500000,'43.330','June');
+drop table emp_salaryinfo;
+select * from emp_salaryinfo;
+update emp_salaryinfo set monthsal=33.899 where empid=101;
+
+/* Department Information table */
+
+create table dept (
+	deptno int PRIMARY KEY,
+    dname varchar(20) NOT NULL
+);
+insert into dept values(1,'Team 1-FSD'),
+						(2,'Team 2-FE'),
+                        (3,'Team 3-.N'),
+						(4,'Team 4-SF');
+select * from dept;
+drop table dept;
+update dept set dname = 'HR' where deptno=1;
+update dept set dname = 'Core IT' where deptno=2;
+update dept set dname = 'Training ' where deptno =3;
+update dept set dname = 'Testing' where deptno=4;
+select * from dept;
+
+/* Management Team table */
+
+create table managment_team 
+(
+	managerid int,
+    managername varchar (20),
+    deptno int,
+constraint fk_managment_team_managerdept FOREIGN KEY (deptno) references dept(deptno)); -- foreign key constraint
+drop table managment_team;
+insert into managment_team values(13564,'Travis scott',1),
+									(13658,'Nik Thomas',2),
+                                    (14758,'Bella Hadid',3),
+                                    (65894,'Kylie Jenner',4);
+select * from managment_team;
+drop table managment_team;
+desc managment_team;
+select * from emp;
+
+-- tempp table create
+create table tempp (first varchar(20), info varchar(15));
+drop table tempp;
+
+/* create table for leave managment of employee */
+create table leave_managment(empid int,fromdate varchar(20),todate varchar(20),updatedon date,
+constraint fk_leave_managment_empid FOREIGN KEY(empid) references emp_info(empid));
+insert into leave_managment values(101,'2020-10-02','2020-10-05',sysdate());
+insert into leave_managment values(102,'2020-10-08','2020-10-09',now());
+insert into leave_managment values(103,NULL,NULL,sysdate()),
+									(104,NULL,NULL,sysdate());
+insert into leave_managment values(105,'2021-04-02','2021-04-05',sysdate()),
+									(106,NULL,NULL,sysdate()),
+                                    (107,NULL,NULL,sysdate()),
+                                    (108,'2020-04-14','2020-05-05',sysdate()),
+                                    (109,'2018-12-27','2019-01-05',sysdate()),
+                                    (110,'2021-04-22','2021-04-26',sysdate());
+                                    
+drop table leave_managment;
+select * from leave_managment;
+/*************************** STORED PROCEDURE ********************************/
+-- procedure to add employee entries in the table-----------------------
+delimiter $$
+create procedure dataentry(empid int ,
+    efirstname varchar(20) ,
+    elastname varchar(20) ,
+    ecity varchar(20),
+    epincode int ,
+	eage int,
+    egender char(6),
+    edob date,
+    equalification varchar(20) ,
+    edoj date ,
+    edesignation varchar(20) ,
+    emaritalstatus varchar(20),
+    eexperience float ,
+    eexcompany varchar(20),
+    etechnology varchar(20) )
+begin
+		insert into emp_info values(empid,efirstname,elastname,ecity,epincode,eage,egender,edob,equalification,edoj,edesignation,emaritalstatus,eexperience,eexcompany,etechnology);
+end ; $$
+delimiter ;
+call dataentry(106,'Mahesh','Pawar','Beed',411121,23,'Male','1997-03-08','BE Mechanical','2020-12-11','salesforce developer','Single',0.5,'SAP','salesforce');
+call dataentry(107,'Manish','Ingole','Nagpur',400121,22,'Male','1998-05-06','BE Electronics','2021-01-02','software developer','Single',0.6,'Xento','IT');
+call dataentry(108,'Mayuresh','Madhavi','Mumbai',400102,27,'Male','1994-07-08','BE Mechanical','2019-12-02','Manual tester','Single',1.7,'MorningStar','Testing');
+call dataentry(109,'Mahesh','Kanojiya','Mumbai',410144,29,'Male','1991-08-08','MSC Physics','2017-02-05','Trainer','Single',3.7,'Nokia','Training');
+call dataentry(110,'Kunal','Chaudhary','Pune',401245,22,'Male','1998-03-18','BE Mechanical','2021-03-19','Databse Engineer','Single',0.4,'Infosys','Database');
+drop procedure dataentry;
+select * from emp_info;
+
+insert into emp_info values(111,'Pavan','Patil','Sakri',423304,21,'Male','1999-01-11','BE Civil','2020-01-07','Student','Single',0.0,'student','civil');
+-- to calculate HRA of employee-------------------------------
+delimiter $$
+create procedure hra_salary()
+begin
+	declare x float ;
+    declare hra float;
+    select monthsal into x from emp_salaryinfo
+    where empid = 101;
+    set hra = x * 0.4;
+		insert into tempp values(hra,'HRA');
+end ; $$
+delimiter ;
+drop procedure hra_salary;
+call hra_salary();
+select * from tempp;
+
+-- to calculate the salary range-----------------------------
+delimiter $$
+create procedure salrange()
+begin
+	declare m varchar(20);
+    select yearsal into m from emp_salaryinfo where empid = 104;
+    if m>400000 then
+		insert into tempp values (m, 'High Sal');
+	elseif m<400000 then
+		insert into tempp values(m,'Low sal');
+	else
+		insert into tempp values(m,'Medium sal');
+	end if;
+end ; $$
+delimiter ;
+
+drop procedure salrange;
+call salrange(); 
+-- select * from emp_salaryinfo
+-- where (select round(monthsal,1)from tempp);
+select * from tempp;
+desc tempp;
+
+/**************************** VIEWS ********************************/
+create view v1 as select * from emp_info 
+where egender = 'Male';
+show create view v1;
+desc v1;
+select * from v1;
+select efirstname,elastname,edesignation from v1;
+
+/************************* TRIGGERS *******************************/
+delimiter $$
+create trigger bonus
+before insert 
+on emp_salaryinfo for each row
+begin
+	set new.yearsal = new.yearsal+2;
+end ; $$
+delimiter ;
+
+show triggers in Employee_Managment_DB;
+
+/************************* CURSOR *********************************/
+CREATE TEMPORARY TABLE dates (
+    dt datetime
+);
+DELIMITER $$
+CREATE PROCEDURE proc()
+BEGIN
+
+DECLARE fromdate datetime;
+DECLARE todate datetime;
+
+SET fromdate = '2001-01-01';
+SET todate = '2001-01-12';
+BEGIN
+WHILE(fromdate < todate) do
+   SET fromdate = DATE_ADD(fromdate, INTERVAL 1 DAY);
+   INSERT INTO dates VALUES (fromdate);
+END WHILE;
+END ;
+DELIMITER ;
+desc dates;
+select * from dates;
+/*********************************************************************/
+create table cur(fir int, sec varchar(20));
+drop table cur;
+delimiter $$
+create procedure cursord()
+begin
+	declare fir int;
+    declare sec varchar (20);
+    declare deptn int;
+    -- select managerid,managername from managment_team where deptno=3;
+	declare c2 cursor for select managerid,managername from managment_team where deptno = 3;
+    open c2;
+    fetch c2 into fir, sec;
+    -- while @@FETCH_STATUS= 0
+		insert into cur values(fir,sec);
+    -- select * from managment_team;
+    close c2;
+    -- deallocate c2;
+end ; $$
+delimiter ;
+
+call cursord();
+select * from cur;
+    
+-- FETCH c1 INTO tempp(a,b);
+
+-- declare c1 CURSOR FOR select * from tempp;
+
+/**************************** QUERY ********************************/
+
+select efirstname,mobileno from emp_info,emp_contact 
+where emp_info.empid = emp_contact.empid;
+
+select efirstname,yearsal from emp_info,emp_salaryinfo 
+where emp_info.empid = emp_salaryinfo.empid;
+
+select dname,managername from dept, managment_team
+where dept.deptno = managment_team.deptno;
+
+select efirstname,elastname ,mobileno from emp_info,emp_contact
+where emp_info.empid = emp_contact.empid;
+
+select max(yearsal)from emp_salaryinfo
+where yearsal < (select max(yearsal) from emp_salaryinfo);
+
+
